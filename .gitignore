@@ -3,3 +3,5 @@ qbe
 config.h
 .comfile
 *.out
+zig-cache
+zig-out

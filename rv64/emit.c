@@ -8,7 +8,7 @@ enum {
 static struct {
 	short op;
 	short cls;
-	char *asm;
+	char *_asm;
 } omap[] = {
 	{ Oadd,    Ki, "add%k %=, %0, %1" },
 	{ Oadd,    Ka, "fadd.%k %=, %0, %1" },
@@ -326,7 +326,7 @@ emitins(Ins *i, Fn *fn, FILE *f)
 			|| (omap[o].cls == Ki && KBASE(i->cls) == 0))
 				break;
 		}
-		emitf(omap[o].asm, i, fn, f);
+		emitf(omap[o]._asm, i, fn, f);
 		break;
 	case Ocopy:
 		if (req(i->to, i->arg[0]))

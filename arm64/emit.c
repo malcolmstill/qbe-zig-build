@@ -37,7 +37,7 @@ enum {
 static struct {
 	short op;
 	short cls;
-	char *asm;
+	char *_asm;
 } omap[] = {
 	{ Oadd,    Ki, "add %=, %0, %1" },
 	{ Oadd,    Ka, "fadd %=, %0, %1" },
@@ -374,7 +374,7 @@ emitins(Ins *i, E *e)
 			|| (omap[o].cls == Ki && KBASE(i->cls) == 0))
 				break;
 		}
-		emitf(omap[o].asm, i, e);
+		emitf(omap[o]._asm, i, e);
 		break;
 	case Onop:
 		break;
