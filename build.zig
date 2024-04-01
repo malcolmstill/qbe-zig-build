@@ -4,6 +4,7 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
 
     const optimize = b.standardOptimizeOption(.{});
+    _ = optimize; // See comment below
 
     // Generate config.h with appropriate default qbe target
     var config_file = try std.fs.cwd().createFile("config.h", .{});
@@ -36,7 +37,7 @@ pub fn build(b: *std.Build) !void {
     const qbe_exe = b.addExecutable(.{
         .name = "qbe",
         .target = target,
-        .optimize = optimize,
+        .optimize = .ReleaseFast, // If we try to use .ReleaseSafe or .Debug invoking qbe traps
     });
 
     qbe_exe.addCSourceFiles(.{
@@ -76,4 +77,57 @@ pub fn build(b: *std.Build) !void {
     });
 
     b.installArtifact(qbe_exe);
+
+    const libqbe = b.addStaticLibrary(.{
+        .name = "qbe-lib",
+        .root_source_file = .{ .path = "src/qbe.zig" },
+        .target = target,
+        .optimize = .ReleaseFast,
+    });
+
+    libqbe.linkLibC();
+
+    libqbe.addCSourceFiles(.{
+        .files = &.{
+            "abi.c",
+            "alias.c",
+            "cfg.c",
+            "copy.c",
+            "emit.c",
+            "fold.c",
+            "live.c",
+            "load.c",
+            "lib.c", // lib.c instead of main.c
+            "mem.c",
+            "parse.c",
+            "rega.c",
+            "simpl.c",
+            "spill.c",
+            "ssa.c",
+            "util.c",
+            // amd64
+            "amd64/emit.c",
+            "amd64/isel.c",
+            "amd64/sysv.c",
+            "amd64/targ.c",
+            // arm64
+            "arm64/abi.c",
+            "arm64/emit.c",
+            "arm64/isel.c",
+            "arm64/targ.c",
+            // rv64
+            "rv64/abi.c",
+            "rv64/emit.c",
+            "rv64/isel.c",
+            "rv64/targ.c",
+        },
+    });
+
+    const module = b.addModule("qbe-zig", .{
+        .root_source_file = .{ .path = "src/qbe.zig" },
+    });
+
+    module.addIncludePath(.{ .path = "" });
+
+    b.installArtifact(libqbe);
 }
