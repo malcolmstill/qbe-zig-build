@@ -80,7 +80,7 @@ pub fn build(b: *std.Build) !void {
 
     const libqbe = b.addStaticLibrary(.{
         .name = "qbe-lib",
-        .root_source_file = .{ .path = "src/qbe.zig" },
+        .root_source_file = b.path("src/qbe.zig"),
         .target = target,
         .optimize = .ReleaseFast,
     });
@@ -124,10 +124,10 @@ pub fn build(b: *std.Build) !void {
     });
 
     const module = b.addModule("qbe-zig", .{
-        .root_source_file = .{ .path = "src/qbe.zig" },
+        .root_source_file = b.path("src/qbe.zig"),
     });
 
-    module.addIncludePath(.{ .path = "" });
+    module.addIncludePath(b.path(""));
 
     b.installArtifact(libqbe);
 }
