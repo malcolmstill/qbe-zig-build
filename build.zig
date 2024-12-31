@@ -78,6 +78,8 @@ pub fn build(b: *std.Build) !void {
 
     b.installArtifact(qbe_exe);
 
+    qbe_exe.linkLibC();
+
     const libqbe = b.addStaticLibrary(.{
         .name = "qbe-lib",
         .root_source_file = b.path("src/qbe.zig"),
