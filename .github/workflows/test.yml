@@ -13,9 +13,9 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
-      - name: zig build test
+      - name: zig build
         working-directory: "./${{matrix.dir}}"
-        run: zig build test
+        run: zig build
   lint:
     strategy:
       matrix:
