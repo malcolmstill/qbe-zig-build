@@ -1,0 +1,32 @@
+name: qbe-zig
+on: push
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        dir: ["", "example"]
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
+      - name: zig build
+        working-directory: "./${{matrix.dir}}"
+        run: zig build
+  lint:
+    strategy:
+      matrix:
+        dir: ["", "example"]
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
+      - name: zig fmt
+        working-directory: "./${{matrix.dir}}"
+        run: zig fmt --check .

@@ -7,32 +7,33 @@ pub fn build(b: *std.Build) !void {
     _ = optimize; // See comment below
 
     // Generate config.h with appropriate default qbe target
-    var config_file = try std.fs.cwd().createFile("config.h", .{});
-    defer config_file.close();
+    const wf = b.addWriteFiles();
+    const config_h_path = "config.h";
 
-    switch (target.result.os.tag) {
+    const config_h_define = switch (target.result.os.tag) {
         .macos => switch (target.result.cpu.arch) {
-            .aarch64 => try config_file.writeAll(
-                \\#define Deftgt T_arm64_apple
-            ),
-            .x86_64 => try config_file.writeAll(
-                \\#define Deftgt T_amd64_apple
-            ),
+            .aarch64 =>
+            \\#define Deftgt T_arm64_apple
+            ,
+            .x86_64 =>
+            \\#define Deftgt T_amd64_apple
+            ,
             else => return error.MacosUnsupportedArchitectureOn,
         },
         else => switch (target.result.cpu.arch) {
-            .aarch64 => try config_file.writeAll(
-                \\#define Deftgt T_arm64
-            ),
-            .x86_64 => try config_file.writeAll(
-                \\#define Deftgt T_amd64_sysv
-            ),
-            .riscv64 => try config_file.writeAll(
-                \\#define Deftgt T_rv64
-            ),
+            .aarch64 =>
+            \\#define Deftgt T_arm64
+            ,
+            .x86_64 =>
+            \\#define Deftgt T_amd64_sysv
+            ,
+            .riscv64 =>
+            \\#define Deftgt T_rv64
+            ,
             else => return error.UnsupportedArchitecture,
         },
-    }
+    };
+    _ = wf.add(config_h_path, config_h_define);
 
     const qbe_exe = b.addExecutable(.{
         .name = "qbe",
@@ -76,7 +77,11 @@ pub fn build(b: *std.Build) !void {
         },
     });
 
+    qbe_exe.addIncludePath(wf.getDirectory());
+
     b.installArtifact(qbe_exe);
+
+    qbe_exe.linkLibC();
 
     const libqbe = b.addStaticLibrary(.{
         .name = "qbe-lib",
@@ -122,6 +127,8 @@ pub fn build(b: *std.Build) !void {
             "rv64/targ.c",
         },
     });
+
+    libqbe.addIncludePath(wf.getDirectory());
 
     const module = b.addModule("qbe-zig", .{
         .root_source_file = b.path("src/qbe.zig"),
