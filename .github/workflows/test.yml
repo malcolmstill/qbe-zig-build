@@ -22,7 +22,6 @@ jobs:
         dir: ["", "example"]
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
