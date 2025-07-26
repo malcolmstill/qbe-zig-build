@@ -1,7 +1,10 @@
 # QBE via zig
 
 This repo provides QBE installable / dependable on via the zig package manager. QBE
-can be consumed either as a binary or a library
+can be invoked either as a binary or a library (with `qbe.emit`, see below).
+
+If you're looking to generate the QBE intermediate language from zig code programmatically, check out
+https://github.com/ciathefed/qbe-zig.
 
 ## QBE binary
 
