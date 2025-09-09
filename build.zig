@@ -37,8 +37,10 @@ pub fn build(b: *std.Build) !void {
 
     const qbe_exe = b.addExecutable(.{
         .name = "qbe",
-        .target = target,
-        .optimize = .ReleaseFast, // If we try to use .ReleaseSafe or .Debug invoking qbe traps
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = .ReleaseFast, // If we try to use .ReleaseSafe or .Debug invoking qbe traps
+        }),
     });
 
     qbe_exe.addCSourceFiles(.{
@@ -84,11 +86,14 @@ pub fn build(b: *std.Build) !void {
 
     qbe_exe.linkLibC();
 
-    const libqbe = b.addStaticLibrary(.{
+    const libqbe = b.addLibrary(.{
         .name = "qbe-lib",
-        .root_source_file = b.path("src/qbe.zig"),
-        .target = target,
-        .optimize = .ReleaseFast,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/qbe.zig"),
+            .target = target,
+            .optimize = .ReleaseFast,
+        }),
+        .linkage = .static,
     });
 
     libqbe.linkLibC();
