@@ -10,9 +10,9 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.1
+          version: 0.15.1
       - name: zig build
         working-directory: "./${{matrix.dir}}"
         run: zig build
@@ -24,9 +24,9 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.1
+          version: 0.15.1
       - name: zig fmt
         working-directory: "./${{matrix.dir}}"
         run: zig fmt --check .
